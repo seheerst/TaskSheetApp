@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
+import 'package:task_sheet_app/widgets/TaskItem.dart';
 
 import '../models/taskModel.dart';
 
@@ -53,20 +54,22 @@ class _HomePageState extends State<HomePage> {
                   background: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                    Icon(Icons.delete, color: Colors.grey,),
-                    SizedBox(width: 10,),
-                    Text('Bu Görev Silinecek'),
-                  ],),
+                      Icon(
+                        Icons.delete,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('Bu Görev Silinecek'),
+                    ],
+                  ),
                   key: Key(nowTask.id),
                   onDismissed: (direction) {
                     _allTask.removeAt(index);
                     setState(() {});
                   },
-                  child: ListTile(
-                    //  leading: Text(nowTask.id),
-                    title: Text(nowTask.name),
-                    subtitle: Text(nowTask.createdAt.toString()),
-                  ),
+                  child: TaskItem(task: nowTask),
                 );
               },
             )
@@ -86,6 +89,7 @@ class _HomePageState extends State<HomePage> {
             width: MediaQuery.of(context).size.width,
             child: ListTile(
               title: TextField(
+                autofocus: true,
                 style: const TextStyle(fontSize: 20),
                 decoration: const InputDecoration(
                   border: InputBorder.none,
