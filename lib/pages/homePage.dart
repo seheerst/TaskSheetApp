@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:task_sheet_app/data/localStorage.dart';
 import 'package:task_sheet_app/main.dart';
+import 'package:task_sheet_app/widgets/customSearchDelegate.dart';
 import 'package:task_sheet_app/widgets/taskItem.dart';
 
 import '../models/taskModel.dart';
@@ -32,7 +33,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: GestureDetector(
             onTap: () {
-              _showButtonAddTask(context);
+              _showButtonAddTask();
             },
             child: const Text(
               'Bugün neler yapacaksın? ',
@@ -40,10 +41,12 @@ class _HomePageState extends State<HomePage> {
             )),
         centerTitle: false,
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+          IconButton(onPressed: () {
+            _showSearchPage();
+          }, icon: const Icon(Icons.search)),
           IconButton(
               onPressed: () {
-                _showButtonAddTask(context);
+                _showButtonAddTask();
               },
               icon: const Icon(Icons.add)),
         ],
@@ -83,7 +86,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _showButtonAddTask(BuildContext context) {
+  void _showButtonAddTask() {
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -122,5 +125,10 @@ class _HomePageState extends State<HomePage> {
   void _getAllTaskFromDb() async {
     _allTask = await _localStorage.getAllTask();
     setState(() {});
+  }
+
+  void _showSearchPage() async{
+     await showSearch(context: context, delegate: CustomSearchDelegate(allTask: _allTask));
+     _getAllTaskFromDb();
   }
 }

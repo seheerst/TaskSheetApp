@@ -18,14 +18,13 @@ class _TaskItemState extends State<TaskItem> {
   late LocalStorage _localStorage;
   @override
   void initState() {
-
     super.initState();
     _localStorage = locator<LocalStorage>();
-    _taskController.text = widget.task.name;
   }
 
   @override
   Widget build(BuildContext context) {
+    _taskController.text = widget.task.name;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
@@ -69,7 +68,9 @@ class _TaskItemState extends State<TaskItem> {
                 onSubmitted: (yeniDeger) {
                   if (yeniDeger.length > 3) {
                     widget.task.name = yeniDeger;
-                    _localStorage.updateTask(task: widget.task,);
+                    _localStorage.updateTask(
+                      task: widget.task,
+                    );
                   }
                 },
               ),
