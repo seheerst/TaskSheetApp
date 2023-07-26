@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
-import 'package:task_sheet_app/widgets/TaskItem.dart';
+import 'package:task_sheet_app/data/localStorage.dart';
+import 'package:task_sheet_app/main.dart';
+import 'package:task_sheet_app/widgets/taskItem.dart';
 
 import '../models/taskModel.dart';
 
@@ -13,13 +15,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late List<Task> _allTask;
+  late LocalStorage _localStorage;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _localStorage = locator<LocalStorage>();
     _allTask = <Task>[];
-    _allTask.add(Task.create(name: 'deneme', createdAt: DateTime.now()));
+    _getAllTaskFromDb();
   }
 
   @override
@@ -67,6 +70,7 @@ class _HomePageState extends State<HomePage> {
                   key: Key(nowTask.id),
                   onDismissed: (direction) {
                     _allTask.removeAt(index);
+                    _localStorage.deleteTask(task: nowTask);
                     setState(() {});
                   },
                   child: TaskItem(task: nowTask),
@@ -74,7 +78,7 @@ class _HomePageState extends State<HomePage> {
               },
             )
           : const Center(
-              child: Text('Henüz görev eklemedin, \n        Hadi başlayalım'),
+              child: Text('Henüz görev eklemedin, \n\t Hadi başlayalım'),
             ),
     );
   }
@@ -96,13 +100,14 @@ class _HomePageState extends State<HomePage> {
                   hintText: 'Görevin Nedir?',
                 ),
                 onSubmitted: (value) {
-                  if (value.length > 3) {
+                  if (value.isNotEmpty) {
                     Navigator.of(context).pop();
                     DatePicker.showTimePicker(context, showSecondsColumn: false,
-                        onConfirm: (time) {
+                        onConfirm: (time) async {
                       var newTask = Task.create(name: value, createdAt: time);
 
-                      _allTask.add(newTask);
+                      _allTask.insert(0, newTask);
+                      await _localStorage.addTask(task: newTask);
                       setState(() {});
                     });
                   }
@@ -112,5 +117,10 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         });
+  }
+
+  void _getAllTaskFromDb() async {
+    _allTask = await _localStorage.getAllTask();
+    setState(() {});
   }
 }
